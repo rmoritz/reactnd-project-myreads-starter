@@ -16,7 +16,7 @@ class Book extends React.Component {
                 <div className="book-top">
                     <div 
                         className="book-cover" 
-                        style={{ width: 128, height: 193, backgroundImage: `url("${book.imageLinks.thumbnail}")` }}></div>
+                        style={{ width: 128, height: 193, backgroundImage: `url("${book.imageLinks.thumbnail}")` }} />
                     <MoveBook book={book} onMoveBook={onMoveBook} />
                 </div>
                 <div className="book-title">{book.title}</div>

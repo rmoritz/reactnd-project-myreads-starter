@@ -40,7 +40,7 @@ class SearchBooks extends React.Component {
           <Link to='/' className="close-search">Close</Link>
           <div className="search-books-input-wrapper">
             <Debounce time='500' handler='onChange'>
-              <input 
+              <input autoFocus
                 type="text" 
                 onChange={this.search}
                 placeholder="Search by title or author" />

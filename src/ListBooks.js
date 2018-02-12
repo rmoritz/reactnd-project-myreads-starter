@@ -1,16 +1,17 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import BookShelf from './BookShelf'
 
-class ListBooks extends Component {
+class ListBooks extends React.Component {
     static propTypes = {
         title: PropTypes.string.isRequired,
-        books: PropTypes.array.isRequired
+        books: PropTypes.array.isRequired,
+        onMoveBook: PropTypes.func.isRequired
     }
 
     render() {
-        const { title, books } = this.props;
+        const { title, books, onMoveBook } = this.props;
         const currentlyReading = books.filter((b) => b.shelf === 'currentlyReading')
         const wantToRead = books.filter((b) => b.shelf === 'wantToRead')
         const read = books.filter((b) => b.shelf === 'read')
@@ -23,17 +24,17 @@ class ListBooks extends Component {
                 <div className="list-books-content">
                     <div>
                         <BookShelf 
-                            id='currentlyReading' 
                             title='Currently Reading'
-                            books={currentlyReading} />
+                            books={currentlyReading}
+                            onMoveBook={onMoveBook} />
                         <BookShelf 
-                            id='wantToRead' 
                             title='Want to Read'
-                            books={wantToRead} />
+                            books={wantToRead}
+                            onMoveBook={onMoveBook} />
                         <BookShelf 
-                            id='read' 
                             title='Read'
-                            books={read} />
+                            books={read}
+                            onMoveBook={onMoveBook} />
                     </div>
                 </div>
                 <div className="open-search">

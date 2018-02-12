@@ -1,31 +1,66 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { Debounce } from 'react-throttle'
 import PropTypes from 'prop-types'
+import * as BooksAPI from './BooksAPI'
+import Book from './Book'
 
-class SearchBooks extends Component {
-    render() {
-        return (
-            <div className="search-books">
-            <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
-              <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
+class SearchBooks extends React.Component {
+  static propTypes = {
+    onMoveBook: PropTypes.func.isRequired,
+    onSearchComplete: PropTypes.func.isRequired
+  }
 
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author"/>
+  constructor(props) {
+    super(props)
 
-              </div>
-            </div>
-            <div className="search-books-results">
-              <ol className="books-grid"></ol>
-            </div>
-          </div>
-        )
+    this.search = this.search.bind(this)
+    this.state = {
+      books: []
     }
+  }
+
+  search(event) {
+    const query = event.target.value.trim()
+    const onSearchComplete = this.props.onSearchComplete
+
+    BooksAPI.search(query)
+      .then((results) => {
+        const books = !results || results.error ? [] : results;
+        this.setState({ books: onSearchComplete(books) })
+      })
+  }
+
+  render() {
+    const { onMoveBook } = this.props
+
+    return (
+      <div className="search-books">
+        <div className="search-books-bar">
+          <Link to='/' className="close-search">Close</Link>
+          <div className="search-books-input-wrapper">
+            <Debounce time='500' handler='onChange'>
+              <input 
+                type="text" 
+                onChange={this.search}
+                placeholder="Search by title or author" />
+            </Debounce>
+          </div>
+        </div>
+        <div className="search-books-results">
+          <ol className="books-grid">
+          {
+            this.state.books.map((b) => (
+              <li key={b.id}>
+                <Book book={b} onMoveBook={onMoveBook} />
+              </li>
+            ))
+          }
+          </ol>
+        </div>
+      </div>
+    )
+  }
 }
 
 export default SearchBooks

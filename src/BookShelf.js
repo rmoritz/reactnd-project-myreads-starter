@@ -1,16 +1,16 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import Book from './Book'
 
-class BookShelf extends Component {
+class BookShelf extends React.Component {
     static propTypes = {
-        id: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
-        books: PropTypes.array.isRequired
+        books: PropTypes.array.isRequired,
+        onMoveBook: PropTypes.func.isRequired
     }
 
     render() {
-        const { id, title, books } = this.props;
+        const { title, books, onMoveBook } = this.props;
 
         return (
             <div className="bookshelf">
@@ -20,7 +20,7 @@ class BookShelf extends Component {
                         {
                             books.map((b) => (
                                 <li key={b.id}>
-                                    <Book book={b} shelf={id} />
+                                    <Book book={b} onMoveBook={onMoveBook} />
                                 </li>
                             ))
                         }

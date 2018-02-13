@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { Debounce } from 'react-throttle'
 import PropTypes from 'prop-types'
 import * as BooksAPI from './BooksAPI'
-import Book from './Book'
+import SearchResults from './SearchResults'
+import sortBy from 'sort-by'
 
 class SearchBooks extends React.Component {
   static propTypes = {
@@ -14,26 +15,30 @@ class SearchBooks extends React.Component {
   constructor(props) {
     super(props)
 
-    this.search = this.search.bind(this)
+    this.handleQueryChange = this.handleQueryChange.bind(this)
     this.state = {
-      books: []
+      books: undefined
     }
   }
 
-  search(event) {
+  handleQueryChange(event) {
     const query = event.target.value.trim()
     const onSearchComplete = this.props.onSearchComplete
 
-    BooksAPI.search(query)
-      .then((results) => {
-        const books = !results || results.error ? [] : results;
-        this.setState({ books: onSearchComplete(books) })
-      })
+    if (query) {
+      BooksAPI.search(query)
+        .then((results) => {
+          const books = !results || results.error ? [] : results;
+          books.sort(sortBy('title'))
+          this.setState({ books: onSearchComplete(books) })
+        })
+    }
+    else {
+      this.setState({ books: undefined })
+    }
   }
 
   render() {
-    const { onMoveBook } = this.props
-
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -41,23 +46,15 @@ class SearchBooks extends React.Component {
           <div className="search-books-input-wrapper">
             <Debounce time='500' handler='onChange'>
               <input autoFocus
-                type="text" 
-                onChange={this.search}
+                type="text"
+                onChange={this.handleQueryChange}
                 placeholder="Search by title or author" />
             </Debounce>
           </div>
         </div>
-        <div className="search-books-results">
-          <ol className="books-grid">
-          {
-            this.state.books.map((b) => (
-              <li key={b.id}>
-                <Book book={b} onMoveBook={onMoveBook} />
-              </li>
-            ))
-          }
-          </ol>
-        </div>
+        <SearchResults
+          results={this.state.books}
+          onMoveBook={this.props.onMoveBook} />
       </div>
     )
   }

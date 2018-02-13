@@ -103,6 +103,14 @@ body, .app {
   padding: 80px 10px 20px;
 }
 
+.search-books-results h1 {
+  font-weight: 400;
+  margin: 0;
+  line-height: 400px;
+  text-align: center;
+  color: lightslategrey;  
+}
+
 /* books grid */
 
 .books-grid {

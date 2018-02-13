@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import ListBooks from './ListBooks'
 import SearchBooks from './SearchBooks'
+import sortBy from 'sort-by'
 
 class BooksApp extends React.Component {
   constructor() {
@@ -19,11 +20,11 @@ class BooksApp extends React.Component {
 
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
-      this.setState({ books: books })
+      this.setState({ books: books.sort(sortBy('title')) })
     })
   }
 
-  // Add shelf info to search results
+  // Add shelf info to search results.
   enhanceSearchResults(results) {
     const books = this.state.books
     return results.map((r) => {
@@ -46,6 +47,9 @@ class BooksApp extends React.Component {
         book.shelf = shelf
         this.setState({ books: this.state.books.concat([book])})
       }
+
+      // Ensure books stay sorted
+      this.setState({ books: this.state.books.sort(sortBy('title'))})
     })
   }
 

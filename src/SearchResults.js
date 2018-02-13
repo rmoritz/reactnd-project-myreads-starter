@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Book from './Book'
+import { ToastContainer } from 'react-toastify'
 
 class SearchResults extends React.Component {
     static propTypes = {
@@ -26,6 +27,7 @@ class SearchResults extends React.Component {
                         </ol>
                     ) 
                     || (results && <h1>No books found</h1>)
+                    || (<ToastContainer />)
                 }
             </div>
         )

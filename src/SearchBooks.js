@@ -2,9 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Debounce } from 'react-throttle'
 import PropTypes from 'prop-types'
+import sortBy from 'sort-by'
+import { toast } from 'react-toastify'
 import * as BooksAPI from './BooksAPI'
 import SearchResults from './SearchResults'
-import sortBy from 'sort-by'
 
 class SearchBooks extends React.Component {
   static propTypes = {
@@ -32,6 +33,7 @@ class SearchBooks extends React.Component {
           books.sort(sortBy('title'))
           this.setState({ books: onSearchComplete(books) })
         })
+        .catch(() => toast.error('Error performing search'))
     }
     else {
       this.setState({ books: undefined })

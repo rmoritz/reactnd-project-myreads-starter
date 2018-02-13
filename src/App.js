@@ -1,27 +1,30 @@
 import React from 'react'
 import './App.css'
 import { Route } from 'react-router-dom'
+import sortBy from 'sort-by'
+import { toast } from 'react-toastify'
 import * as BooksAPI from './BooksAPI'
 import ListBooks from './ListBooks'
 import SearchBooks from './SearchBooks'
-import sortBy from 'sort-by'
 
 class BooksApp extends React.Component {
   constructor() {
     super()
 
     this.state = {
-      books: []
+      books: undefined
     }
-    
+
     this.moveBook = this.moveBook.bind(this)
     this.enhanceSearchResults = this.enhanceSearchResults.bind(this)
   }
 
   componentDidMount() {
-    BooksAPI.getAll().then((books) => {
-      this.setState({ books: books.sort(sortBy('title')) })
-    })
+    BooksAPI.getAll()
+      .then((books) => {
+        this.setState({ books: books.sort(sortBy('title')) })
+      })
+      .catch(() => toast.error('Error fetching books'));
   }
 
   // Add shelf info to search results.
@@ -35,7 +38,8 @@ class BooksApp extends React.Component {
   }
 
   moveBook(book, shelf) {
-    BooksAPI.update(book, shelf).then(() => {
+    BooksAPI.update(book, shelf)
+    .then(() => {
       const existingBook = this.state.books.find((b) => b.id === book.id)
       if (existingBook) {
         // Book already in collection, so just change shelf and force render
@@ -45,18 +49,20 @@ class BooksApp extends React.Component {
       else {
         // Book not yet in collection, so change shelf and add it
         book.shelf = shelf
-        this.setState({ books: this.state.books.concat([book])})
+        this.setState({ books: this.state.books.concat([book]) })
       }
 
       // Ensure books stay sorted
-      this.setState({ books: this.state.books.sort(sortBy('title'))})
+      this.setState({ books: this.state.books.sort(sortBy('title')) })
     })
+    .catch(() => toast.error(`Error updating book '${book.title}'`))
   }
 
   render() {
     const { books } = this.state;
 
     return (
+
       <div className="app">
         <Route
           exact path='/'
@@ -69,7 +75,7 @@ class BooksApp extends React.Component {
         <Route
           exact path='/search'
           render={() => (
-            <SearchBooks 
+            <SearchBooks
               onMoveBook={this.moveBook}
               onSearchComplete={this.enhanceSearchResults} />
           )} />
